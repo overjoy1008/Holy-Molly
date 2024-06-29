@@ -44,13 +44,13 @@ button{
 }
 
 .large-btn {
+    color: #ffffff;
     font-family: Pretendard;
     font-weight: bold;
     font-size: 32px;
     background-color: #3182F6;
     width: 280px;
     height: 80px;
-    color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 20px;
@@ -58,19 +58,18 @@ button{
 }
 
 .carousel-btn {
-    background-color: #ffffff;
+    color: #3182F6;
     font-size: 20px;
     font-weight: bold;
+    text-align: left;
     border: 2px solid #3182F6;
+    border-radius: 16px;
     width: 273px;
     height: 70px;
-    color: #3182F6;
-    border-radius: 16px;
+    background-color: #ffffff;
     padding: 10px 20px;
-    font-size: 16px;
     cursor: pointer;
     margin-bottom: 10px;
-
     position: fixed;
     bottom: 110px; /* Height of .footer + some space */
     left: 10px; /* Adjust based on your layout */
@@ -173,17 +172,7 @@ footer {
     height: 40px;
 }
 
-/* input[type="text"] {
-    flex: 1;
-    width: 260px;
-    line-height: 52px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 20px;
-    background-color: #f1f1f1;
-    font-size: 16px;
-    margin: 0 10px;
-} */
+
 
 .input-with-icon {
     margin: 0 20px;
@@ -205,4 +194,5 @@ footer {
     border: none;
     border-radius: 20px;
     font-size: 16px;
+    outline: none;
 }
