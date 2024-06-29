@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홀리몰리</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div>
+        <header>
+            <h2>ae-몰리</h2>
+        </header>
+        <main>
+            <div class="chat-container"></div>
+            <button class="carousel-btn">문제 촬영/선택</button>
+        </main>
+        <footer>
+            <div class="chat-input-container">
+                <button class="add-button">
+                    <img src="{% static 'img/more_button.png' %}" alt="Add" class="add-icon">
+                </button>
+                <div class="input-with-icon">
+                    <input type="text" placeholder="질문 입력하기">
+                    <button class="voice-button">
+                        <img src="{% static 'img/voice_button.png' %}" alt="Voice" class="voice-icon">
+                    </button>
+                </div>
+                
+                <button class="send-button">
+                    <img src="{% static 'img/sending_button.png' %}" alt="Send" class="send-icon">
+                </button>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
