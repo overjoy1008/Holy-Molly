@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홀리몰리</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <script>
+        // Django의 URL 태그를 사용하여 JavaScript에서 URL을 사용할 수 있게 만듭니다.
+        var chatUrl = "{% url 'chatting_screen' %}";
+    </script>
+    <script src="{% static 'js/main.js' %}"></script>
+</head>
+<body class="flex-center">
+    <div>
+        <h1 class="mb200">Logo</h1>
+        <form action="{% url 'chatting_screen' %}">
+            <button class="large-btn" type="submit">시작하기</button>
+        </form>
+    </div>
+</body>
+</html>
