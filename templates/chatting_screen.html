@@ -13,7 +13,7 @@
             <h2>ae-몰리</h2>
         </header>
         <main>
-            <div class="chat-container"></div>
+            <div class="chat-container" id="chat-container"></div>
             <button class="carousel-btn" id="file-upload-button">문제 촬영/선택</button>
             <input type="file" id="file-input" style="display:none;">
         </main>
@@ -36,23 +36,46 @@
         </footer>
     </div>
     <script>
-        // JavaScript to trigger file input click
-        document.getElementById('file-upload-button').addEventListener('click', function() {
-            document.getElementById('file-input').click();
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // JavaScript to trigger file input click
+            document.getElementById('file-upload-button').addEventListener('click', function() {
+                document.getElementById('file-input').click();
+            });
 
-        // Optional: Handle file selection
-        document.getElementById('file-input').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                alert(`Selected file: ${file.name}`);
-                // Here you can handle the file upload logic
+            // Handle file selection and display in chat
+            document.getElementById('file-input').addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imageUrl = e.target.result;
+                            displayImageInChat(imageUrl);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert('선택한 파일은 이미지가 아닙니다.');
+                    }
+                }
+            });
+
+            // Attach file button click event handler
+            document.getElementById('attach-file-button').addEventListener('click', function() {
+                document.getElementById('file-input').click();
+            });
+
+            // Function to display image in chat
+            function displayImageInChat(imageUrl) {
+                const chatContainer = document.getElementById('chat-container');
+                if (chatContainer) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imageUrl;
+                    imgElement.classList.add('chat-image'); // Optional: Add styling to the image
+                    chatContainer.appendChild(imgElement);
+                } else {
+                    console.error('chat-container element not found.');
+                }
             }
-        });
-
-        // Attach file button click event handler
-        document.getElementById('attach-file-button').addEventListener('click', function() {
-            document.getElementById('file-input').click();
         });
     </script>
 </body>
