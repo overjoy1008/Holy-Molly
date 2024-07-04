@@ -1,23 +1,131 @@
 <!DOCTYPE html>
-<html lang="kr">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>홀리몰리</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <script>
-        // Django의 URL 태그를 사용하여 JavaScript에서 URL을 사용할 수 있게 만듭니다.
-        var chatUrl = "{% url 'chatting_screen' %}";
-    </script>
-    <script src="{% static 'js/main.js' %}"></script>
+    <title>홀리물리 - Index Onboard</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        .index-screen {
+            position: relative;
+            width: 100%;
+            max-width: 393px;
+            height: 852px;
+            background: #0A1A31;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 63px;
+        }
+
+        .logo-icon {
+            width: 56px;
+            height: 57px;
+            background: #1D4E94;
+            border: 1px solid #FFFFFF;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 32px;
+            line-height: 38px;
+            color: #FFFFFF;
+            margin-left: 12px;
+        }
+
+        .subtitle {
+            position: absolute;
+            width: 293px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 190px;
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 29px;
+            text-align: center;
+            color: #FFFFFF;
+        }
+
+        .layers-group {
+            position: absolute;
+            width: 324px;
+            height: 232px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 367px;
+        }
+
+        .layer {
+            position: absolute;
+            width: 323px;
+            height: 115px;
+        }
+
+        .layer-1 { background: #D6E6FD; top: 0; }
+        .layer-2 { background: #83B4FA; top: 59px; }
+        .layer-3 { background: #3182F6; top: 117px; }
+
+        .start-button {
+            position: absolute;
+            width: 280px;
+            height: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 719px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 32px;
+            color: #1D4E94;
+            text-decoration: none;
+        }
+
+        .beta-notice {
+            position: absolute;
+            width: 270px;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 682px;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 17px;
+            text-align: center;
+            color: #FFFFFF;
+        }
+    </style>
 </head>
-<body class="flex-center">
-    <div>
-        <h1 class="mb200">Logo</h1>
-        <form action="{% url 'chatting_screen' %}">
-            <button class="large-btn" type="submit">시작하기</button>
-        </form>
+<body>
+    <div class="index-screen">
+        <div class="logo-container">
+            <div class="logo-icon"></div>
+            <div class="logo-text">홀리물리</div>
+        </div>
+        <div class="subtitle">3-step으로 구조화된 문제힌트<br>진짜 '접근법'을 알려줍니다.</div>
+        <div class="layers-group">
+            <div class="layer layer-1"></div>
+            <div class="layer layer-2"></div>
+            <div class="layer layer-3"></div>
+        </div>
+        <a href="#" class="start-button">시작하기</a>
+        <div class="beta-notice">*Beta버전으로 일부 기능만 제공하고 있습니다.</div>
     </div>
 </body>
 </html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홀리물리 - Chatting Screen</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        .chatting-screen {
+            position: relative;
+            width: 100%;
+            max-width: 393px;
+            height: 852px;
+            background: #F5F5F5;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .header {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            left: 0;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #F5F5F5;
+            border-bottom: 1px solid #E6E6E6;
+        }
+
+        .header-title {
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 24px;
+            text-align: center;
+            color: #143462;
+        }
+
+        .input-field {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            left: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 12px;
+            background: #FFFFFF;
+            border-radius: 8px 8px 0px 0px;
+            box-sizing: border-box;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .more-button {
+            width: 50px;
+            height: 50px;
+            /* border: 2px solid #000000; */
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            padding: 2px 12px;
+            width: calc(100% - 96px); /* Adjust width to fit between more-button and sending-button */
+            height: 52px;
+            background: #EBEBEB;
+            border-radius: 20px;
+            margin: 0 12px;
+        }
+
+        .input-placeholder {
+            font-weight: 500;
+            font-size: 20px;
+            line-height: 24px;
+            color: #B8B8B8;
+        }
+
+        .sending-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            background: #3182F6;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+
+        .sending-icon {
+            width: 24px;
+            height: 24px;
+            background: #FFFFFF;
+        }
+
+        .disclaimer {
+            width: 100%;
+            font-weight: 300;
+            font-size: 10px;
+            line-height: 12px;
+            text-align: center;
+            color: #5C5C5C;
+        }
+
+        /* Modal overlay styles */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-highlight {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            left: 5px;
+            top: 763px;
+            background: #FFFFFF;
+            border-radius: 50%;
+            z-index: 11;
+        }
+
+        .modal-message {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 13px;
+            width: 311px;
+            height: 73px;
+            background: #FFFFFF;
+            border-radius: 16px 16px 16px 0px;
+            position: absolute;
+            left: 32px;
+            top: 671px;
+            z-index: 12;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            text-align: center;
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="chatting-screen">
+        <header class="header">
+            <h1 class="header-title">홀리물리</h1>
+        </header>
+        <div class="input-field">
+            <div class="input-row">
+                <div class="more-button"></div>
+                <div class="input-label">
+                    <span class="input-placeholder">질문 입력하기</span>
+                </div>
+                <div class="sending-button">
+                    <div class="sending-icon"></div>
+                </div>
+            </div>
+            <p class="disclaimer">몰리는 실수를 할 수 있습니다. 중요한 정보를 확인하세요.</p>
+        </div>
+        
+        <!-- Modal overlay -->
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal-highlight"></div>
+            <div class="modal-message">
+                여기를 클릭해! 궁금한 문제를 알려줘!<br>
+                문제 사진을 촬영하거나 선택해줘!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const modalOverlay = document.getElementById('modalOverlay');
+                modalOverlay.style.opacity = '1';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
