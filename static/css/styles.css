@@ -113,17 +113,6 @@ main {
     padding: 20px;
 }
 
-
-.chat-input-field {
-    width: Fixed (393px)px;
-    height: Hug (180px)px;
-    top: 100px;
-    padding: 0px 8px 0px 8px;
-    gap: 0px;
-    opacity: 0px;
-    background-color: #e7f3ff;
-}
-
 .capture-button:hover {
     background-color: #e7f3ff;
 }

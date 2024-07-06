@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홀리물리 - Chatting Screen</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .chatting-screen {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #F5F5F5;
+            overflow: hidden;
+        }
+
+        .header {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            left: 0;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #F5F5F5;
+            border-bottom: 1px solid #E6E6E6;
+        }
+
+        .header-title {
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 24px;
+            text-align: center;
+            color: #143462;
+        }
+
+        .input-field {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            left: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 12px;
+            background: #FFFFFF;
+            border-radius: 8px 8px 0px 0px;
+            box-sizing: border-box;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .more-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            padding: 2px 12px;
+            width: calc(100% - 96px);
+            height: 52px;
+            background: #EBEBEB;
+            border-radius: 20px;
+            margin: 0 12px;
+        }
+
+        .input-placeholder {
+            font-weight: 500;
+            font-size: 20px;
+            line-height: 24px;
+            color: #B8B8B8;
+        }
+
+        .sending-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            background: #3182F6;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+
+        .sending-icon {
+            width: 24px;
+            height: 24px;
+            background: #FFFFFF;
+        }
+
+        .disclaimer {
+            width: 100%;
+            font-weight: 300;
+            font-size: 10px;
+            line-height: 12px;
+            text-align: center;
+            color: #5C5C5C;
+        }
+
+        .modal-overlay1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-highlight1 {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            left: 0;
+            top: 0;
+            background: #FFFFFF;
+            border-radius: 50%;
+            z-index: 11;
+        }
+
+        .modal-message1 {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 13px;
+            background: #FFFFFF;
+            border-radius: 16px 16px 16px 0px;
+            position: absolute;
+            left: 32px;
+            top: 600px;
+            z-index: 12;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            text-align: center;
+            color: #000000;
+        }
+
+        /* Second Modal overlay styles */
+        .modal-overlay2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .carousel-field {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 8px 12px; /* Added padding to the left and right */
+            gap: 8px;
+            position: absolute;
+            width: calc(100% - 24px); /* Adjusted to account for padding */
+            height: 86px;
+            left: 0px;
+            bottom: 102px;
+            overflow-x: auto;
+            white-space: nowrap;
+
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            &::-webkit-scrollbar {
+                display: none;
+            }
+            /* Hide scrollbar for IE, Edge and Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .carousel-button {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 18px 24px;
+            gap: 10px;
+            min-width: calc(20% - 16px); /* Adjusted to fit within the container */
+            height: 70px;
+            background: #FFFFFF;
+            border: 1px solid #3182F6;
+            border-radius: 16px;
+            flex: 1; /* Added to make buttons grow equally */
+            order: 0;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            color: #3182F6;
+        }
+        
+        .modal-message2 {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 13px;
+            gap: 10px;
+            position: absolute;
+            left: 8px;
+            bottom: 190px;
+            background: #FFFFFF;
+            border-radius: 16px 16px 16px 0px;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #3182F6;
+        }
+
+        /* Third Modal overlay styles */
+        .modal-overlay3 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .modal-message3 {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 13px;
+            gap: 10px;
+            position: absolute;
+            left: 32px;
+            top: 560px;
+            background: #FFFFFF;
+            border-radius: 16px 16px 16px 0px;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 0.8;
+            color: #000000;
+            white-space: nowrap;
+        }
+
+        .highlight-text {
+            color: #3182F6;
+        }
+    </style>
+</head>
+<body>
+    <div class="chatting-screen" id="chattingScreen">
+        <header class="header">
+            <h1 class="header-title">홀리물리</h1>
+        </header>
+        <div class="input-field">
+            <div class="input-row">
+                <div class="more-button">
+                    <div class="modal-highlight1"></div>
+                </div>
+                <div class="input-label">
+                    <span class="input-placeholder">질문 입력하기</span>
+                </div>
+                <div class="sending-button">
+                    <div class="sending-icon"></div>
+                </div>
+            </div>
+            <p class="disclaimer">몰리는 실수를 할 수 있습니다. 중요한 정보를 확인하세요.</p>
+        </div>
+        
+        <!-- First Modal overlay -->
+        <div class="modal-overlay1" id="modalOverlay1">
+            <div class="modal-message1">
+                여기를 클릭해! 궁금한 문제를 알려줘!<br>
+                문제 사진을 촬영하거나 선택해줘!
+            </div>
+        </div>
+
+        <!-- Second Modal overlay -->
+        <div class="modal-overlay2" id="modalOverlay2">
+            <div class="modal-message2">단원을 선택해줘!</div>
+            <div class="carousel-field">
+                <button class="carousel-button">역학</button>
+                <button class="carousel-button">열역학</button>
+                <button class="carousel-button">상대성 이론</button>
+                <button class="carousel-button">전자기학</button>
+                <button class="carousel-button">파동&이중성</button>
+            </div>
+        </div>
+
+        <!-- Third Modal overlay -->
+        <div class="modal-overlay3" id="modalOverlay3">
+            <div class="modal-message3">
+                <div>이제 <span class="highlight-text">자유롭게 질문해줘!</span></div>
+                <div>어디까지 풀었는지, 어떻게 접근했는지</div>
+                <div>알려주면 딱 맞는 힌트를 줄게!</div>
+                <br>
+                <div>참, 그리고 다른 문제가 궁금하면</div>
+                <div><span class="highlight-text">아까처럼 +버튼을 눌러줘~</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function() {
+            const chattingScreen = document.getElementById('chattingScreen');
+            const modalOverlay1 = document.getElementById('modalOverlay1');
+            const modalOverlay2 = document.getElementById('modalOverlay2');
+            const modalOverlay3 = document.getElementById('modalOverlay3');
+            let currentModal = 1;
+            let isTransitioning = false;
+
+            setTimeout(function() {
+                modalOverlay1.style.opacity = '1';
+            }, 1000);
+
+            chattingScreen.addEventListener('click', function(event) {
+                if (!isTransitioning) {
+                    isTransitioning = true;
+                    if (currentModal === 1) {
+                        transitionToNextModal(modalOverlay1, modalOverlay2);
+                        currentModal = 2;
+                    }
+                }
+                event.stopPropagation();
+            });
+
+            modalOverlay2.addEventListener('click', function(event) {
+                if (!isTransitioning && currentModal === 2) {
+                    isTransitioning = true;
+                    transitionToNextModal(modalOverlay2, modalOverlay3);
+                    currentModal = 3;
+                }
+                event.stopPropagation();
+            });
+
+            function transitionToNextModal(currentOverlay, nextOverlay) {
+                currentOverlay.style.opacity = '0';
+                setTimeout(function() {
+                    currentOverlay.style.display = 'none';
+                    nextOverlay.style.display = 'flex';
+                    nextOverlay.style.pointerEvents = 'auto';
+                    setTimeout(function() {
+                        nextOverlay.style.opacity = '1';
+                        isTransitioning = false;
+                    }, 50);
+                }, 300);
+            }
+
+            // Prevent clicks on modalOverlay2 and modalOverlay3 from triggering the transition again
+            modalOverlay2.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+            modalOverlay3.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>
