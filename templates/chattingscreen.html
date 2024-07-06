@@ -375,6 +375,113 @@
         .highlight-text {
             color: #3182F6;
         }
+
+        .image-upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 99;
+        }
+
+        .image-upload-modal {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            width: 100%;
+            background: #FFFFFF;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .image-upload-button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #3182F6;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .image-preview-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .image-preview {
+            max-width: 90%;
+            max-height: 70%;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .image-preview-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .image-preview-button {
+            padding: 10px 20px;
+            background: #3182F6;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 500;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .uploaded-image {
+            max-width: 70%;
+            max-height: 200px;
+            object-fit: contain;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        .modal-overlay-carousel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            /* flex-direction: column; */
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+
+        .modal-message-carousel {
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #FFFFFF;
+            margin: 8px;
+            position: absolute;
+            bottom: 190px;
+        }
     </style>
 </head>
 
@@ -433,21 +540,73 @@
                 <div><span class="highlight-text">아까처럼 +버튼을 눌러줘~</span></div>
             </div>
         </div>
+
+        <!-- Image upload functionality -->
+        <div class="image-upload-overlay" id="imageUploadOverlay">
+            <div class="image-upload-modal" id="imageUploadModal">
+                <button class="image-upload-button" id="takePhotoButton">새로운 이미지 촬영</button>
+                <button class="image-upload-button" id="uploadImageButton">기존 이미지 업로드</button>
+            </div>
+
+            <div class="image-preview-container" id="imagePreviewContainer">
+                <img class="image-preview" id="imagePreview" src="" alt="Image preview">
+                <div class="image-preview-buttons">
+                    <button class="image-preview-button" id="confirmImageButton">전송</button>
+                    <button class="image-preview-button" id="cancelImageButton">취소</button>
+                </div>
+            </div>
+        </div>
+        
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+
+        <div class="modal-overlay-carousel" id="modalOverlayCarousel">
+            <div class="modal-message-carousel">문제에 해당하는 주제를 선택해주세요!</div>
+            <div class="carousel-field">
+                <button class="carousel-button" data-topic="역학">역학</button>
+                <button class="carousel-button" data-topic="열역학">열역학</button>
+                <button class="carousel-button" data-topic="상대성 이론">상대성 이론</button>
+                <button class="carousel-button" data-topic="전자기학">전자기학</button>
+                <button class="carousel-button" data-topic="파동&이중성">파동&이중성</button>
+            </div>
+        </div>
     </div>
 
     <script>
         window.addEventListener('load', function () {
             const chattingScreen = document.getElementById('chattingScreen');
+
             const modalOverlay1 = document.getElementById('modalOverlay1');
             const modalOverlay2 = document.getElementById('modalOverlay2');
             const modalOverlay3 = document.getElementById('modalOverlay3');
             const chatContainer = document.getElementById('chatContainer');
+
             const chatInput = document.getElementById('chat-input');
             const sendButton = document.getElementById('sendButton');
             const sendButtonImage = sendButton.querySelector('img');
+
+            const moreButton = document.querySelector('.more-button');
+            const imageUploadOverlay = document.getElementById('imageUploadOverlay');
+            const imageUploadModal = document.getElementById('imageUploadModal');
+            const takePhotoButton = document.getElementById('takePhotoButton');
+            const uploadImageButton = document.getElementById('uploadImageButton');
+            const imageInput = document.getElementById('imageInput');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const confirmImageButton = document.getElementById('confirmImageButton');
+            const cancelImageButton = document.getElementById('cancelImageButton');
+
+
+            const modalOverlayCarousel = document.getElementById('modalOverlayCarousel');
+            const carouselButtons = document.querySelectorAll('.carousel-button');
+
             let currentModal = 1;
             let isTransitioning = false;
             let isWaitingForResponse = false;
+            let isImageCapture = false;
+            let selectedTopic = '';
+            let isCarouselFromImageUpload = false;
+
+            disableChatInputAndMoreButton();
 
             setTimeout(function () {
                 modalOverlay1.style.opacity = '1';
@@ -503,6 +662,17 @@
                     }, 300);
                 });
                 isTransitioning = false;
+                enableChatInputAndMoreButton();
+            }
+            
+            function disableChatInputAndMoreButton() {
+                chatInput.disabled = true;
+                moreButton.style.pointerEvents = 'none';
+            }
+
+            function enableChatInputAndMoreButton() {
+                chatInput.disabled = false;
+                moreButton.style.pointerEvents = 'auto';
             }
 
             function addMessage(message, isUser) {
@@ -586,6 +756,96 @@
                     
             // Initial button state
             updateSendButtonState();
+            
+            moreButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                imageUploadOverlay.style.display = 'block';
+            });
+
+            imageUploadOverlay.addEventListener('click', function(event) {
+                if (event.target === imageUploadOverlay) {
+                    imageUploadOverlay.style.display = 'none';
+                }
+            });
+
+            takePhotoButton.addEventListener('click', function() {
+                isImageCapture = true;
+                imageInput.setAttribute('capture', 'environment');
+                imageInput.setAttribute('accept', 'image/*');
+                imageInput.click();
+            });
+
+            uploadImageButton.addEventListener('click', function() {
+                isImageCapture = false;
+                imageInput.removeAttribute('capture');
+                imageInput.setAttribute('accept', 'image/*');
+                // imageInput.accept = "image/*";
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        showImagePreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            function showImagePreview() {
+                imageUploadOverlay.style.display = 'none';
+                imagePreviewContainer.style.display = 'flex';
+            }
+
+            confirmImageButton.addEventListener('click', function() {
+                const imageUrl = imagePreview.src;
+                addImageMessage(imageUrl, true);
+                imagePreviewContainer.style.display = 'none';
+                imageInput.value = '';
+                modalOverlayCarousel.style.display = 'flex';
+                isCarouselFromImageUpload = true;
+            });
+
+            cancelImageButton.addEventListener('click', function() {
+                imagePreviewContainer.style.display = 'none';
+                if (isImageCapture) {
+                    imageInput.click();
+                } else {
+                    imageUploadOverlay.style.display = 'block';
+                }
+            });
+
+            function addImageMessage(imageUrl, isUser) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.classList.add(isUser ? 'user-message' : 'ai-message');
+                
+                const imageElement = document.createElement('img');
+                imageElement.src = imageUrl;
+                imageElement.classList.add('uploaded-image');
+                
+                messageElement.appendChild(imageElement);
+                chatContainer.appendChild(messageElement);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            carouselButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (isCarouselFromImageUpload) {
+                        selectedTopic = this.dataset.topic;
+                        modalOverlayCarousel.style.display = 'none';
+                        console.log('Selected topic:', selectedTopic);
+                        addMessage(`선택한 주제는 ${selectedTopic}입니다. 어떤 도움이 필요하신가요?`, false);
+                        isCarouselFromImageUpload = false; // Reset the flag
+                    } else if (currentModal === 2) {
+                        transitionToNextModal(modalOverlay2, modalOverlay3);
+                        currentModal = 3;
+                    }
+                });
+            });
         });
     </script>
 </body>
