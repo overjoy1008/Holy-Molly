@@ -444,8 +444,10 @@
             const chatContainer = document.getElementById('chatContainer');
             const chatInput = document.getElementById('chat-input');
             const sendButton = document.getElementById('sendButton');
+            const sendButtonImage = sendButton.querySelector('img');
             let currentModal = 1;
             let isTransitioning = false;
+            let isWaitingForResponse = false;
 
             setTimeout(function () {
                 modalOverlay1.style.opacity = '1';
@@ -512,25 +514,53 @@
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
 
-            function sendMessage() {
-                const message = chatInput.value.trim();
-                if (message) {
-                    addMessage(message, true);
-                    chatInput.value = '';
-                    // Here you would typically send the message to your backend
-                    // and receive an AI response. For this example, we'll simulate a response.
-                    setTimeout(() => {
-                        addMessage("이 문제는 열역학 개념을 활용해서 푸는 문제야. 열역학 제1법칙과 제2법칙을 고려해보자.", false);
-                    }, 1000);
+            function disableSendButton() {
+                sendButton.disabled = true;
+                sendButton.style.backgroundColor = '#EBEBEB';
+                sendButton.style.pointerEvents = 'none';
+                sendButtonImage.src = '../static/img/sending_button_off.png';
+            }
+
+            function enableSendButton() {
+                sendButton.disabled = false;
+                sendButton.style.backgroundColor = '#3182F6';
+                sendButton.style.pointerEvents = 'auto';
+                sendButtonImage.src = '../static/img/sending_button.png';
+            }
+
+            function updateSendButtonState() {
+                if (chatInput.value.trim() === '' || isWaitingForResponse) {
+                    disableSendButton();
+                } else {
+                    enableSendButton();
                 }
+            }
+
+            function sendMessage() {
+                if (isWaitingForResponse || chatInput.value.trim() === '') return;
+
+                const message = chatInput.value.trim();
+                addMessage(message, true);
+                chatInput.value = '';
+                isWaitingForResponse = true;
+                updateSendButtonState();
+            
+                setTimeout(() => {
+                    const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오'
+                    addMessage(gpt_message, false);
+                    isWaitingForResponse = false;
+                    updateSendButtonState();
+                }, 1000);
             }
 
             sendButton.addEventListener('click', sendMessage);
             chatInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
+                if (e.key === 'Enter' && !isWaitingForResponse && chatInput.value.trim() !== '') {
                     sendMessage();
                 }
             });
+
+            chatInput.addEventListener('input', updateSendButtonState);
 
             chatInput.addEventListener('focus', function () {
                 // Ensure the chat container scrolls to the bottom when the keyboard appears
@@ -553,6 +583,9 @@
             modalOverlay3.addEventListener('click', function (event) {
                 event.stopPropagation();
             });
+                    
+            // Initial button state
+            updateSendButtonState();
         });
     </script>
 </body>
