@@ -784,6 +784,7 @@
             });
 
             imageInput.addEventListener('change', function(event) {
+                event.stopPropagation();
                 const file = event.target.files[0];
                 if (file) {
                     const reader = new FileReader();
@@ -796,8 +797,8 @@
             });
 
             function showImagePreview() {
-                imageUploadOverlay.style.display = 'none';
                 imagePreviewContainer.style.display = 'flex';
+                imageUploadOverlay.style.display = 'none';
             }
 
             confirmImageButton.addEventListener('click', function() {
@@ -811,11 +812,7 @@
 
             cancelImageButton.addEventListener('click', function() {
                 imagePreviewContainer.style.display = 'none';
-                if (isImageCapture) {
-                    imageInput.click();
-                } else {
-                    imageUploadOverlay.style.display = 'block';
-                }
+                imageInput.click();
             });
 
             function addImageMessage(imageUrl, isUser) {
