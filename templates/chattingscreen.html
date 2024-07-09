@@ -27,7 +27,6 @@
             overflow: hidden;
             align-items: center;
             display: flex;
-
             box-shadow: #eeeeee 0px 0px 8px 8px;
         }
 
@@ -52,6 +51,11 @@
             color: #143462;
         }
 
+        .header img {
+            width : 24px;
+            height : 24px;
+        }
+
         .chat-container {
             position: absolute;
             top: 100px;
@@ -72,16 +76,16 @@
         }
 
         .user-message {
-            background-color: #3182F6;
-            color: white;
+            background-color: #D9D9D9;
+            color: black;
             align-self: flex-end;
             margin-left: auto;
             border-bottom-right-radius: 0;
         }
 
         .ai-message {
-            background-color: #D6E6FD;
-            color: #143462;
+            background-color: #F5F5F5;
+            color: #000000;
             align-self: flex-start;
             margin-right: auto;
             border-bottom-left-radius: 0;
@@ -488,7 +492,8 @@
 <body>
     <div class="chatting-screen" id="chattingScreen">
         <header class="header">
-            <h1 class="header-title">홀리물리</h1>
+            <img src="../static/img/logo.png" alt="Logo">
+            <h1 class="header-title">Stepy</h1>
         </header>
         <div class="chat-container" id="chatContainer"></div>
         <div class="input-field">
@@ -574,7 +579,6 @@
     <script>
         window.addEventListener('load', function () {
             const chattingScreen = document.getElementById('chattingScreen');
-
             const modalOverlay1 = document.getElementById('modalOverlay1');
             const modalOverlay2 = document.getElementById('modalOverlay2');
             const modalOverlay3 = document.getElementById('modalOverlay3');
@@ -605,6 +609,8 @@
             let isImageCapture = false;
             let selectedTopic = '';
             let isCarouselFromImageUpload = false;
+            let isFirstChat = true;
+            let isImageUploaded = false;
 
             disableChatInputAndMoreButton();
 
@@ -714,13 +720,34 @@
                 chatInput.value = '';
                 isWaitingForResponse = true;
                 updateSendButtonState();
-            
-                setTimeout(() => {
-                    const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오'
-                    addMessage(gpt_message, false);
-                    isWaitingForResponse = false;
-                    updateSendButtonState();
-                }, 1000);
+
+                if (isImageUploaded && isFirstChat) {
+                    addMessage("답변 생성 중...", false);
+                    isFirstChat = false;
+
+                    setTimeout(() => {
+                        addMessage("풀이 step 구성 중", false);
+
+                        setTimeout(() => {
+                            addMessage("답변 생성 완료", false);
+                            
+                            setTimeout(() => {
+                                const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
+                                addMessage(gpt_message, false);
+                                isWaitingForResponse = false;
+                                updateSendButtonState();
+                            }, 5000);
+
+                        }, 5000);
+                    }, 5000);
+                } else {
+                    setTimeout(() => {
+                        const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
+                        addMessage(gpt_message, false);
+                        isWaitingForResponse = false;
+                        updateSendButtonState();
+                    }, 1000);
+                }
             }
 
             sendButton.addEventListener('click', sendMessage);
@@ -733,20 +760,17 @@
             chatInput.addEventListener('input', updateSendButtonState);
 
             chatInput.addEventListener('focus', function () {
-                // Ensure the chat container scrolls to the bottom when the keyboard appears
                 setTimeout(() => {
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 }, 100);
             });
 
-            // Prevent default touch behavior to ensure smooth transitions
             document.body.addEventListener('touchstart', function (e) {
                 if (e.target === modalOverlay3) {
                     e.preventDefault();
                 }
             }, { passive: false });
 
-            // Prevent clicks on modalOverlay2 and modalOverlay3 from triggering the transition again
             modalOverlay2.addEventListener('click', function (event) {
                 event.stopPropagation();
             });
@@ -754,7 +778,6 @@
                 event.stopPropagation();
             });
                     
-            // Initial button state
             updateSendButtonState();
             
             moreButton.addEventListener('click', function(event) {
@@ -779,7 +802,6 @@
                 isImageCapture = false;
                 imageInput.removeAttribute('capture');
                 imageInput.setAttribute('accept', 'image/*');
-                // imageInput.accept = "image/*";
                 imageInput.click();
             });
 
@@ -808,6 +830,7 @@
                 imageInput.value = '';
                 modalOverlayCarousel.style.display = 'flex';
                 isCarouselFromImageUpload = true;
+                isImageUploaded = true;
             });
 
             cancelImageButton.addEventListener('click', function() {
@@ -846,5 +869,4 @@
         });
     </script>
 </body>
-
 </html>
