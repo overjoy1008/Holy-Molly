@@ -86,6 +86,25 @@
             border-bottom-right-radius: 0;
         }
 
+        .ai-message-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .ai-profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #3182F6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+
         .ai-message {
             background-color: #F5F5F5;
             color: #000000;
@@ -229,10 +248,12 @@
 
         /* First Modal overlay styles */
         .modal-overlay1 {
-            position: absolute;
+            position: fixed;
             top: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
+            max-width: 393px;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             display: flex;
@@ -256,31 +277,28 @@
         }
 
         .modal-message1 {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 15px 13px;
-            gap: 10px;
             position: absolute;
             left: 32px;
-            top: 671px;
+            bottom: 100px;
             background: #FFFFFF;
             border-radius: 16px 16px 16px 0px;
             z-index: 12;
             font-weight: 700;
             font-size: 20px;
-            line-height: 0.8;
+            line-height: 1.2;
             text-align: center;
             color: #000000;
+            padding: 15px 13px;
         }
 
         /* Second Modal overlay styles */
         .modal-overlay2 {
-            position: absolute;
+            position: fixed;
             top: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
+            max-width: 393px;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             display: flex;
@@ -343,13 +361,6 @@
         }
 
         .modal-message2 {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            padding: 15px 13px;
-            gap: 10px;
-            margin: 8px;
             position: absolute;
             left: 8px;
             bottom: 190px;
@@ -357,16 +368,20 @@
             border-radius: 16px 16px 16px 0px;
             font-weight: 700;
             font-size: 20px;
-            line-height: 0.8;
+            line-height: 1.2;
             color: #3182F6;
+            padding: 15px 13px;
+            margin: 8px;
         }
 
         /* Third Modal overlay styles */
         .modal-overlay3 {
-            position: absolute;
+            position: fixed;
             top: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
+            max-width: 393px;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             display: flex;
@@ -379,22 +394,17 @@
         }
 
         .modal-message3 {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 12px 13px;
-            gap: 10px;
             position: absolute;
             left: 32px;
-            top: 560px;
+            bottom: 120px;
             background: #FFFFFF;
             border-radius: 16px 16px 16px 0px;
             font-weight: 700;
             font-size: 20px;
-            line-height: 0.8;
+            line-height: 1.2;
             color: #000000;
             white-space: nowrap;
+            padding: 12px 13px;
         }
 
         .highlight-text {
@@ -507,6 +517,43 @@
             margin: 8px;
             position: absolute;
             bottom: 190px;
+        }
+
+        .step-label {
+            display: inline-block;
+            /* flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 0px 16px;
+            gap: 10px; */
+            width: 100px;
+            height: 40px;
+            background: #3182F6;
+            border-radius: 32px;
+            color: white;
+            font-weight: normal;
+            margin-left: 48px;
+            text-align: center; /* 텍스트 가운데 정렬 */
+            line-height: 40px; /* 텍스트 수직 가운데 정렬 */
+            padding: 0 16px; /* 좌우 패딩 */
+            box-sizing: border-box; /* 패딩 포함한 크기 계산 */
+        }
+
+        .message-spacer {
+            height: 10px;
+        }
+
+        .grayed-out {
+            color: #c9c9c9;
+        }
+
+        @media (min-width: 394px) {
+            .modal-overlay1,
+            .modal-overlay2,
+            .modal-overlay3 {
+                left: calc(50% - 196.5px);
+                transform: none;
+            }
         }
     </style>
 </head>
@@ -635,6 +682,9 @@
             let isCarouselFromImageUpload = false;
             let isFirstChat = true;
             let isImageUploaded = false;
+            let lastMessageSender = null;
+            let stepCount = 0;
+            const maxSteps = 3;
 
             disableChatInputAndMoreButton();
             disableSendButton();
@@ -706,12 +756,98 @@
                 moreButton.style.pointerEvents = 'auto';
             }
 
-            function addMessage(message, isUser) {
-                const messageElement = document.createElement('p');
+            function createMessageElement(isUser) {
+                const messageElement = document.createElement('div');
                 messageElement.classList.add('message');
                 messageElement.classList.add(isUser ? 'user-message' : 'ai-message');
-                messageElement.textContent = message;
+
+                if (!isUser) {
+                    const aiMessageContainer = document.createElement('div');
+                    aiMessageContainer.classList.add('ai-message-container');
+
+                    const profilePicture = document.createElement('div');
+                    profilePicture.classList.add('ai-profile-picture');
+                    
+                    if (lastMessageSender === 'user' || lastMessageSender === null) {
+                        profilePicture.textContent = 'Stepy';
+                        profilePicture.style.visibility = 'visible';
+                    } else {
+                        profilePicture.style.visibility = 'hidden';
+                    }
+                    
+                    aiMessageContainer.appendChild(profilePicture);
+
+                    const messageContent = document.createElement('div');
+                    messageContent.classList.add('ai-message-content');
+                    aiMessageContainer.appendChild(messageContent);
+
+                    messageElement.appendChild(aiMessageContainer);
+                }
+
+                return messageElement;
+            }
+
+            function addMessage(message, isUser) {
+                const messageElement = createMessageElement(isUser);
+
+                if (isUser) {
+                    messageElement.textContent = message;
+                } else {
+                    const messageContent = messageElement.querySelector('.ai-message-content');
+                    messageContent.textContent = message;
+                }
+
                 chatContainer.appendChild(messageElement);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                lastMessageSender = isUser ? 'user' : 'ai';
+            }
+
+            function addSequentialMessages(messages, interval = 3000) {
+                const messageElement = createMessageElement(false);
+                chatContainer.appendChild(messageElement);
+
+                const messageContent = messageElement.querySelector('.ai-message-content');
+
+                messages.forEach((message, index) => {
+                    setTimeout(() => {
+                        if (index > 0) {
+                            // Gray out the previous message
+                            const previousMessage = messageContent.lastElementChild;
+                            if (previousMessage) {
+                                previousMessage.classList.add('grayed-out');
+                            }
+                            // Add a div for increased spacing
+                            const spacer = document.createElement('div');
+                            spacer.classList.add('message-spacer');
+                            messageContent.appendChild(spacer);
+                        }
+                        const messageDiv = document.createElement('div');
+                        messageDiv.textContent = message;
+                        messageDiv.classList.add('sequential-message');
+                        messageContent.appendChild(messageDiv);
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }, index * interval);
+                });
+
+                lastMessageSender = 'ai';
+            }
+            
+            // 백엔드 상태값 전달 예시
+            const backendStatuses = [
+                { type: 'STEP_UPDATE', step: 1 },
+                // { type: 'STEP_UPDATE', step: 2 },
+                // { type: 'STEP_UPDATE', step: 3 },
+                // { type: 'PROCESSING', message: "핵심 개념 찾는 중" },
+                // { type: 'PROCESSING', message: "풀이 step 구성 중" },
+                // { type: 'PROCESSING', message: "✅설명 준비 완료!" },
+            ];
+
+            function addStepLabel(step) {
+                const stepLabel = document.createElement('div');
+                stepLabel.classList.add('step-label');
+                stepLabel.textContent = `${step}/${maxSteps} 단계`;
+                chatContainer.appendChild(stepLabel);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
 
@@ -762,6 +898,34 @@
                 }
             }
 
+            function handleBackendStatus(status) {
+                if (status.type === 'STEP_UPDATE') {
+                    addStepLabel(status.step);
+                } else if (status.type === 'PROCESSING') {
+                    addMessage(status.message, false);
+                }
+            }
+
+            function simulateBackendProcess() {
+                let statusIndex = 0;
+                
+                function sendNextStatus() {
+                    if (statusIndex < backendStatuses.length) {
+                        const status = backendStatuses[statusIndex];
+                        handleBackendStatus(status);
+                        statusIndex++;
+                        setTimeout(sendNextStatus, 2000); // Simulate delay between statuses
+                    } else {
+                        const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
+                        addMessage(gpt_message, false);
+                        isWaitingForResponse = false;
+                        updateSendButtonState();
+                    }
+                }
+
+                sendNextStatus();
+            }
+
             function sendMessage() {
                 if (isWaitingForResponse || chatInput.value.trim() === '' || !isImageUploaded) return;
 
@@ -771,25 +935,42 @@
                 isWaitingForResponse = true;
                 updateSendButtonState();
 
+                // 백엔드 시뮬레이션에 사용하는 코드
                 if (isImageUploaded && isFirstChat) {
-                    addMessage("답변 생성 중...", false);
                     isFirstChat = false;
 
+                    const sequentialMessages = [
+                        "핵심 개념 찾는 중",
+                        "풀이 step 구성 중",
+                        "✅설명 준비 완료!"
+                    ];
+
+                    addSequentialMessages(sequentialMessages, 3000);
+
                     setTimeout(() => {
-                        addMessage("풀이 step 구성 중", false);
+                        simulateBackendProcess();
+                        
+                        // setTimeout(() => {
+                        //     const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
+                        //     addMessage(gpt_message, false);
+                        //     isWaitingForResponse = false;
+                        //     updateSendButtonState();
+                        // }, 1000);
+                    }, 9000);
+                // 실제 백엔드 구축 후 사용할 코드
+                // if (isImageUploaded && isFirstChat) {
+                //     isFirstChat = false;
+                    
+                //     const sequentialMessages = [
+                //         "핵심 개념 찾는 중",
+                //         "풀이 step 구성 중",
+                //         "✅설명 준비 완료!"
+                //     ];
+                //     addSequentialMessages(sequentialMessages, 3000);
 
-                        setTimeout(() => {
-                            addMessage("답변 생성 완료", false);
-                            
-                            setTimeout(() => {
-                                const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
-                                addMessage(gpt_message, false);
-                                isWaitingForResponse = false;
-                                updateSendButtonState();
-                            }, 5000);
-
-                        }, 5000);
-                    }, 5000);
+                //     setTimeout(() => {
+                //         realBackendProcess();
+                //     }, 1000);
                 } else {
                     setTimeout(() => {
                         const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
