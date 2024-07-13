@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>홀리물리 - Chatting Screen</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            background-color: #f0f0f0;
+        }
+
+        .chatting-screen {
+            position: relative;
+            width: 100vw;
+            /*max-width: 393px; */
+            min-height: 100vh;
+            background: #F5F5F5;
+            margin: 0 auto;
+            overflow: hidden;
+            align-items: center;
+            display: flex;
+            box-shadow: #eeeeee 0px 0px 8px 8px;
+        }
+
+        .header {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            left: 0;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #F5F5F5;
+            border-bottom: 1px solid #E6E6E6;
+        }
+
+        .header-title {
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 24px;
+            text-align: center;
+            color: #143462;
+        }
+
+        .header img {
+            width : 24px;
+            height : 24px;
+        }
+
+        .chat-container {
+            position: absolute;
+            top: 100px;
+            bottom: 100px;
+            width: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 70%;
+            margin: 1px;
+            padding: 10px;
+            border-radius: 20px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            background-color: #D9D9D9;
+            color: black;
+            align-self: flex-end;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+
+        .ai-message-container {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .ai-profile-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #3182F6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .ai-message {
+            background-color: #F5F5F5;
+            color: #000000;
+            align-self: flex-start;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+        }
+
+        .ai-message + .ai-message {
+            margin-top: 2px;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            padding: 2px 12px;
+            width: calc(100% - 96px);
+            height: 52px;
+            background: #EBEBEB;
+            border-radius: 20px;
+            margin: 0 12px;
+            cursor: text;
+        }
+
+        #chat-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-family: 'Pretendard', sans-serif;
+            font-size: 20px;
+            color: #000000;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        #chat-input::placeholder {
+            color: #B8B8B8;
+        }
+
+        .input-field {
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            left: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 12px;
+            background: #FFFFFF;
+            border-radius: 8px 8px 0px 0px;
+            box-sizing: border-box;
+        }
+
+        .input-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 16px 4px 0 4px;
+        }
+
+        .more-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .more-button-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+        }
+
+        .more-button-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            padding: 2px 12px;
+            width: calc(100% - 96px);
+            height: 52px;
+            background: #EBEBEB;
+            border-radius: 20px;
+            margin: 0 12px;
+        }
+
+        .input-placeholder {
+            font-weight: 500;
+            font-size: 20px;
+            line-height: 24px;
+            color: #B8B8B8;
+        }
+
+        .sending-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            background: #3182F6;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+
+        .image-first-popup-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .disclaimer {
+            width: 100%;
+            font-weight: 300;
+            font-size: 10px;
+            line-height: 12px;
+            text-align: center;
+            color: #5C5C5C;
+        }
+
+        /* First Modal overlay styles */
+        .modal-overlay1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateX(-50%); 
+            width: 100vw;
+            /* max-width: 393px; */
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .modal-highlight1 {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #FFFFFF;
+            border-radius: 50%;
+            z-index: 11;
+        }
+
+        .modal-message1 {
+            position: absolute;
+            left: 32px;
+            bottom: 100px;
+            background: #FFFFFF;
+            border-radius: 16px 16px 16px 0px;
+            z-index: 12;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 1.2;
+            text-align: center;
+            color: #000000;
+            padding: 15px 13px;
+        }
+
+        /* Second Modal overlay styles */
+        .modal-overlay2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateX(-50%);
+            width: 100vw;
+            /*max-width: 393px;*/
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .carousel-field {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 8px;
+            position: absolute;
+            width: 100vw;
+            height: 86px;
+            left: 0px;
+            bottom: 102px;
+            overflow-x: auto;
+            white-space: nowrap;
+            background-color: #D9D9D9;
+            box-sizing: border-box;
+
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            &::-webkit-scrollbar {
+                display: none;
+            }
+
+            /* Hide scrollbar for IE, Edge and Firefox */
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .carousel-button {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 18px 24px;
+            gap: 10px;
+            min-width: 148px;
+            height: 70px;
+            background: #FFFFFF;
+            border: 1px solid #3182F6;
+            border-radius: 16px;
+            flex: none;
+            order: 0;
+            flex-grow: 0;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            color: #3182F6;
+        }
+
+        .carousel-button2 {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 18px 24px;
+            gap: 10px;
+            min-width: 148px;
+            height: 70px;
+            background: #FFFFFF;
+            border: 1px solid #3182F6;
+            border-radius: 16px;
+            flex: none;
+            order: 0;
+            flex-grow: 0;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            color: rgba(214, 230, 253, 1);
+        }
+
+        .modal-message2 {
+            position: absolute;
+            left: 8px;
+            bottom: 190px;
+            background: #FFFFFF;
+            border-radius: 16px 16px 16px 0px;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 1.2;
+            color: #3182F6;
+            padding: 15px 13px;
+            margin: 8px;
+        }
+
+        /* Third Modal overlay styles */
+        .modal-overlay3 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translateX(-50%);
+            width: 100vw;
+            /*max-width: 393px;*/
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 30;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .modal-message3 {
+            position: absolute;
+            left: 32px;
+            bottom: 120px;
+            background: #FFFFFF;
+            border-radius: 16px 16px 16px 0px;
+            font-weight: 700;
+            font-size: 20px;
+            line-height: 1.2;
+            color: #000000;
+            white-space: nowrap;
+            padding: 12px 13px;
+        }
+
+        .highlight-text {
+            color: #3182F6;
+        }
+
+        .image-upload-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 99;
+        }
+
+        .image-upload-modal {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            width: 100%;
+            background: #FFFFFF;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .image-upload-button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #3182F6;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 500;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .image-preview-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .image-preview {
+            max-width: 90%;
+            max-height: 70%;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .image-preview-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .image-preview-button {
+            padding: 10px 20px;
+            background: #3182F6;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 500;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .uploaded-image {
+            max-width: 70%;
+            max-height: 200px;
+            object-fit: contain;
+            margin: 10px 0;
+            border-radius: 10px;
+            align-self: flex-end;
+        }
+
+        .modal-overlay-carousel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            /* flex-direction: column; */
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+        }
+
+        .modal-message-carousel {
+            font-family: 'Pretendard', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #FFFFFF;
+            margin: 8px;
+            position: absolute;
+            bottom: 190px;
+        }
+
+        .step-label {
+            display: inline-block;
+            /* flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 0px 16px;
+            gap: 10px; */
+            width: 100px;
+            height: 40px;
+            background: #3182F6;
+            border-radius: 32px;
+            color: white;
+            font-weight: normal;
+            margin-left: 48px;
+            text-align: center; /* 텍스트 가운데 정렬 */
+            line-height: 40px; /* 텍스트 수직 가운데 정렬 */
+            padding: 0 16px; /* 좌우 패딩 */
+            box-sizing: border-box; /* 패딩 포함한 크기 계산 */
+        }
+
+        .message-spacer {
+            height: 10px;
+        }
+
+        .grayed-out {
+            color: #c9c9c9;
+        }
+
+        @media (min-width: 100vw) {
+            .modal-overlay1,
+            .modal-overlay2,
+            .modal-overlay3 {
+                left: 0;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chatting-screen" id="chattingScreen">
+        <header class="header">
+            <img src="../static/img/logo.png" alt="Logo">
+            <h1 class="header-title">Stepy</h1>
+        </header>
+        <div class="chat-container" id="chatContainer"></div>
+        <div class="input-field">
+            <div class="input-row">
+                <div class="more-button">
+                    <div class="more-button-icon">
+                        <img src="../static/img/more_button.png" alt="사진 첨부 버튼">
+                    </div>
+                    <div class="modal-highlight1"></div>
+                </div>
+                <div class="input-label">
+                    <input type="text" id="chat-input" placeholder="질문 입력하기">
+                </div>
+                <div class="sending-button" id="sendButton">
+                    <img src="../static/img/sending_button.png" alt="전송 버튼">
+                </div>
+            </div>
+            <p class="disclaimer">몰리는 실수를 할 수 있습니다. 중요한 정보를 확인하세요.</p>
+        </div>
+
+        <!-- First Modal overlay -->
+        <div class="modal-overlay1" id="modalOverlay1">
+            <div class="modal-message1">
+                여기를 클릭해! 궁금한 문제를 알려줘!<br>
+                <span class="highlight-text">문제 사진을 촬영하거나 선택해줘!</span>
+            </div>
+        </div>
+
+        <!-- Second Modal overlay -->
+        <div class="modal-overlay2" id="modalOverlay2">
+            <div class="modal-message2">단원을 선택해줘!</div>
+            <div class="carousel-field">
+                <button class="carousel-button2">상대성이론</button>
+                <button class="carousel-button2">열역학</button>
+                <button class="carousel-button">역학</button>
+                <button class="carousel-button2">전자기학</button>
+                <button class="carousel-button2">파동&이중성</button>
+            </div>
+        </div>
+
+        <!-- Third Modal overlay -->
+        <div class="modal-overlay3" id="modalOverlay3">
+            <div class="modal-message3">
+                <div>이제 <span class="highlight-text">자유롭게 질문해줘!</span></div>
+                <div>어디까지 풀었는지, 어떻게 접근했는지</div>
+                <div>알려주면 딱 맞는 힌트를 줄게!</div>
+                <br>
+                <div>참, 그리고 다른 문제가 궁금하면</div>
+                <div><span class="highlight-text">아까처럼 +버튼을 눌러줘~</span></div>
+            </div>
+        </div>
+
+        <div class="image-first-popup-message" id="popupMessage">문제 사진을 업로드 해주세요!</div>
+
+        <!-- Image upload functionality -->
+        <div class="image-upload-overlay" id="imageUploadOverlay">
+            <div class="image-upload-modal" id="imageUploadModal">
+                <button class="image-upload-button" id="takePhotoButton">새로운 이미지 촬영</button>
+                <button class="image-upload-button" id="uploadImageButton">기존 이미지 업로드</button>
+            </div>
+        </div>
+
+        <div class="image-preview-container" id="imagePreviewContainer">
+            <img class="image-preview" id="imagePreview" src="" alt="Image preview">
+            <div class="image-preview-buttons">
+                <button class="image-preview-button" id="confirmImageButton">전송</button>
+                <button class="image-preview-button" id="cancelImageButton">취소</button>
+            </div>
+        </div>
+        
+        <input type="file" id="imageInput" accept="image/*" style="display: none;">
+
+        <div class="modal-overlay-carousel" id="modalOverlayCarousel">
+            <div class="modal-message-carousel">문제에 해당하는 주제를 선택해주세요!</div>
+            <div class="carousel-field">
+                <button class="carousel-button2" data-topic="상대성이론">상대성이론</button>
+                <button class="carousel-button2" data-topic="열역학">열역학</button>
+                <button class="carousel-button" data-topic="역학">역학</button>
+                <button class="carousel-button2" data-topic="전자기학">전자기학</button>
+                <button class="carousel-button2" data-topic="파동&이중성">파동&이중성</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function () {
+            const chattingScreen = document.getElementById('chattingScreen');
+            const modalOverlay1 = document.getElementById('modalOverlay1');
+            const modalOverlay2 = document.getElementById('modalOverlay2');
+            const modalOverlay3 = document.getElementById('modalOverlay3');
+            const chatContainer = document.getElementById('chatContainer');
+
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('sendButton');
+            const sendButtonImage = sendButton.querySelector('img');
+            const popupMessage = document.getElementById('popupMessage');
+
+            const moreButton = document.querySelector('.more-button');
+            const imageUploadOverlay = document.getElementById('imageUploadOverlay');
+            const imageUploadModal = document.getElementById('imageUploadModal');
+            const takePhotoButton = document.getElementById('takePhotoButton');
+            const uploadImageButton = document.getElementById('uploadImageButton');
+            const imageInput = document.getElementById('imageInput');
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreview = document.getElementById('imagePreview');
+            const confirmImageButton = document.getElementById('confirmImageButton');
+            const cancelImageButton = document.getElementById('cancelImageButton');
+
+            const modalOverlayCarousel = document.getElementById('modalOverlayCarousel');
+            const carouselButtons = document.querySelectorAll('.carousel-button');
+            const carouselButtons2 = document.querySelectorAll('.carousel-button2');
+            
+
+            let currentModal = 1;
+            let isTransitioning = false;
+            let isWaitingForResponse = false;
+            let isImageCapture = false;
+            let selectedTopic = '';
+            let isCarouselFromImageUpload = false;
+            let isFirstChat = true;
+            let isImageUploaded = false;
+            let lastMessageSender = null;
+            let stepCount = 0;
+            const maxSteps = 3;
+
+            disableChatInputAndMoreButton();
+            disableSendButton();
+
+            setTimeout(function () {
+                modalOverlay1.style.opacity = '1';
+            }, 1000);
+
+            chattingScreen.addEventListener('click', function (event) {
+                if (!isTransitioning) {
+                    isTransitioning = true;
+                    if (currentModal === 1) {
+                        transitionToNextModal(modalOverlay1, modalOverlay2);
+                        currentModal = 2;
+                    }
+                }
+                event.stopPropagation();
+            });
+
+            modalOverlay2.addEventListener('click', function (event) {
+                if (!isTransitioning && currentModal === 2) {
+                    isTransitioning = true;
+                    transitionToNextModal(modalOverlay2, modalOverlay3);
+                    currentModal = 3;
+                }
+                event.stopPropagation();
+            });
+
+            modalOverlay3.addEventListener('click', function (event) {
+                if (!isTransitioning && currentModal === 3) {
+                    isTransitioning = true;
+                    hideAllModals();
+                    currentModal = 0;
+                }
+                event.stopPropagation();
+            });
+
+            function transitionToNextModal(currentOverlay, nextOverlay) {
+                currentOverlay.style.opacity = '0';
+                setTimeout(function () {
+                    currentOverlay.style.display = 'none';
+                    nextOverlay.style.display = 'flex';
+                    nextOverlay.style.pointerEvents = 'auto';
+                    setTimeout(function () {
+                        nextOverlay.style.opacity = '1';
+                        isTransitioning = false;
+                    }, 50);
+                }, 300);
+            }
+
+            function hideAllModals() {
+                [modalOverlay1, modalOverlay2, modalOverlay3].forEach(overlay => {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                    }, 300);
+                });
+                isTransitioning = false;
+                enableChatInputAndMoreButton();
+            }
+            
+            function disableChatInputAndMoreButton() {
+                chatInput.disabled = true;
+                moreButton.style.pointerEvents = 'none';
+            }
+
+            function enableChatInputAndMoreButton() {
+                chatInput.disabled = false;
+                moreButton.style.pointerEvents = 'auto';
+            }
+
+            function createMessageElement(isUser) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.classList.add(isUser ? 'user-message' : 'ai-message');
+
+                if (!isUser) {
+                    const aiMessageContainer = document.createElement('div');
+                    aiMessageContainer.classList.add('ai-message-container');
+
+                    const profilePicture = document.createElement('div');
+                    profilePicture.classList.add('ai-profile-picture');
+                    
+                    if (lastMessageSender === 'user' || lastMessageSender === null) {
+                        profilePicture.textContent = 'Stepy';
+                        profilePicture.style.visibility = 'visible';
+                    } else {
+                        profilePicture.style.visibility = 'hidden';
+                    }
+                    
+                    aiMessageContainer.appendChild(profilePicture);
+
+                    const messageContent = document.createElement('div');
+                    messageContent.classList.add('ai-message-content');
+                    aiMessageContainer.appendChild(messageContent);
+
+                    messageElement.appendChild(aiMessageContainer);
+                }
+
+                return messageElement;
+            }
+
+            function addMessage(message, isUser) {
+                const messageElement = createMessageElement(isUser);
+
+                if (isUser) {
+                    messageElement.textContent = message;
+                } else {
+                    const messageContent = messageElement.querySelector('.ai-message-content');
+                    messageContent.textContent = message;
+                }
+
+                chatContainer.appendChild(messageElement);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                lastMessageSender = isUser ? 'user' : 'ai';
+            }
+
+            function addSequentialMessages(messages, interval = 3000) {
+                const messageElement = createMessageElement(false);
+                chatContainer.appendChild(messageElement);
+
+                const messageContent = messageElement.querySelector('.ai-message-content');
+
+                messages.forEach((message, index) => {
+                    setTimeout(() => {
+                        if (index > 0) {
+                            // Gray out the previous message
+                            const previousMessage = messageContent.lastElementChild;
+                            if (previousMessage) {
+                                previousMessage.classList.add('grayed-out');
+                            }
+                            // Add a div for increased spacing
+                            const spacer = document.createElement('div');
+                            spacer.classList.add('message-spacer');
+                            messageContent.appendChild(spacer);
+                        }
+                        const messageDiv = document.createElement('div');
+                        messageDiv.textContent = message;
+                        messageDiv.classList.add('sequential-message');
+                        messageContent.appendChild(messageDiv);
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }, index * interval);
+                });
+
+                lastMessageSender = 'ai';
+            }
+            
+            // 백엔드 상태값 전달 예시
+            const backendStatuses = [
+                { type: 'STEP_UPDATE', step: 1 },
+                // { type: 'STEP_UPDATE', step: 2 },
+                // { type: 'STEP_UPDATE', step: 3 },
+            ];
+
+            function addStepLabel(step) {
+                const stepLabel = document.createElement('div');
+                stepLabel.classList.add('step-label');
+                stepLabel.textContent = `${step}/${maxSteps} 단계`;
+                chatContainer.appendChild(stepLabel);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function disableSendButton() {
+                sendButton.disabled = true;
+                sendButton.style.backgroundColor = '#EBEBEB';
+                sendButton.style.pointerEvents = 'none';
+                sendButtonImage.src = '../static/img/sending_button_off.png';
+            }
+
+            function enableSendButton() {
+                sendButton.disabled = false;
+                sendButton.style.backgroundColor = '#3182F6';
+                sendButton.style.pointerEvents = 'auto';
+                sendButtonImage.src = '../static/img/sending_button.png';
+            }
+
+            function updateSendButtonState() {
+                if (chatInput.value.trim() === '' || isWaitingForResponse) {
+                    disableSendButton();
+                } else {
+                    enableSendButton();
+                }
+            }
+
+            function showPopupMessage() {
+                // console.log('Showing popup message');
+                popupMessage.style.display = 'block';
+                setTimeout(() => {
+                    popupMessage.style.display = 'none';
+                }, 1500);
+            }
+
+            function handleSendAction() {
+                // console.log('Handle send action called');
+                // console.log('isImageUploaded:', isImageUploaded);
+                // console.log('isWaitingForResponse:', isWaitingForResponse);
+                // console.log('chatInput value:', chatInput.value.trim());
+
+                if (!isImageUploaded) {
+                    // console.log('Condition met for showing popup');
+                    showPopupMessage();
+                } else if (!isWaitingForResponse && chatInput.value.trim() !== '') {
+                    // console.log('Condition met for sending message');
+                    sendMessage();
+                } else {
+                    console.log('No action taken');
+                }
+            }
+
+            function handleBackendStatus(status) {
+                if (status.type === 'STEP_UPDATE') {
+                    addStepLabel(status.step);
+                } else if (status.type === 'PROCESSING') {
+                    addMessage(status.message, false);
+                }
+            }
+
+            function simulateBackendProcess() {
+                let statusIndex = 0;
+                
+                function sendNextStatus() {
+                    if (statusIndex < backendStatuses.length) {
+                        const status = backendStatuses[statusIndex];
+                        handleBackendStatus(status);
+                        statusIndex++;
+                        setTimeout(sendNextStatus, 2000); // Simulate delay between statuses
+                    } else {
+                        const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
+                        addMessage(gpt_message, false);
+                        isWaitingForResponse = false;
+                        updateSendButtonState();
+                    }
+                }
+
+                sendNextStatus();
+            }
+
+            function sendMessage() {
+                if (isWaitingForResponse || chatInput.value.trim() === '' || !isImageUploaded) return;
+
+                const message = chatInput.value.trim();
+                addMessage(message, true);
+                chatInput.value = '';
+                isWaitingForResponse = true;
+                updateSendButtonState();
+
+                // 백엔드 시뮬레이션에 사용하는 코드
+                if (isImageUploaded && isFirstChat) {
+                    isFirstChat = false;
+
+                    const sequentialMessages = [
+                        "핵심 개념 찾는 중",
+                        "풀이 step 구성 중",
+                        "✅설명 준비 완료!"
+                    ];
+
+                    addSequentialMessages(sequentialMessages, 3000);
+
+                    setTimeout(() => {
+                        simulateBackendProcess();
+                        
+                        // setTimeout(() => {
+                        //     const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
+                        //     addMessage(gpt_message, false);
+                        //     isWaitingForResponse = false;
+                        //     updateSendButtonState();
+                        // }, 1000);
+                    }, 9000);
+                // 실제 백엔드 구축 후 사용할 코드
+                // if (isImageUploaded && isFirstChat) {
+                //     isFirstChat = false;
+                    
+                //     const sequentialMessages = [
+                //         "핵심 개념 찾는 중",
+                //         "풀이 step 구성 중",
+                //         "✅설명 준비 완료!"
+                //     ];
+                //     addSequentialMessages(sequentialMessages, 3000);
+
+                //     setTimeout(() => {
+                //         realBackendProcess();
+                //     }, 1000);
+                } else {
+                    setTimeout(() => {
+                        const gpt_message = '이민찬이 만든 개멋진 프론트를 보십시오';
+                        addMessage(gpt_message, false);
+                        isWaitingForResponse = false;
+                        updateSendButtonState();
+                    }, 1000);
+                }
+            }
+
+            sendButton.addEventListener('click', function (event) {
+                // console.log('Send button clicked');
+                event.preventDefault();
+                handleSendAction();
+            });
+
+            chatInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    // console.log('Enter key pressed');
+                    e.preventDefault();
+                    handleSendAction();
+                }
+            });
+
+            chatInput.addEventListener('input', updateSendButtonState);
+
+            chatInput.addEventListener('focus', function () {
+                setTimeout(() => {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 100);
+            });
+
+            document.body.addEventListener('touchstart', function (e) {
+                if (e.target === modalOverlay3) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            moreButton.addEventListener('click', function(event) {
+                event.stopPropagation();
+                imageUploadOverlay.style.display = 'block';
+            });
+
+            imageUploadOverlay.addEventListener('click', function(event) {
+                if (event.target === imageUploadOverlay) {
+                    imageUploadOverlay.style.display = 'none';
+                }
+            });
+
+            takePhotoButton.addEventListener('click', function() {
+                isImageCapture = true;
+                imageInput.setAttribute('capture', 'environment');
+                imageInput.setAttribute('accept', 'image/*');
+                imageInput.click();
+            });
+
+            uploadImageButton.addEventListener('click', function() {
+                isImageCapture = false;
+                imageInput.removeAttribute('capture');
+                imageInput.setAttribute('accept', 'image/*');
+                imageInput.click();
+            });
+
+            imageInput.addEventListener('change', function(event) {
+                event.stopPropagation();
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        showImagePreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+                event.target.value = '';
+            });
+
+            function showImagePreview() {
+                imagePreviewContainer.style.display = 'flex';
+                imageUploadOverlay.style.display = 'none';
+            }
+
+            confirmImageButton.addEventListener('click', function() {
+                const imageUrl = imagePreview.src;
+                addImageMessage(imageUrl, true);
+                imagePreviewContainer.style.display = 'none';
+                imageInput.value = '';
+                modalOverlayCarousel.style.display = 'flex';
+                isCarouselFromImageUpload = true;
+                isImageUploaded = true;
+                // console.log('Image uploaded, isImageUploaded set to true');
+                updateSendButtonState();
+            });
+
+            cancelImageButton.addEventListener('click', function() {
+                imagePreviewContainer.style.display = 'none';
+                imageInput.click();
+            });
+
+            function addImageMessage(imageUrl, isUser) {
+                const imageElement = document.createElement('img');
+                imageElement.src = imageUrl;
+                imageElement.classList.add('uploaded-image');
+                
+                chatContainer.appendChild(imageElement);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+
+        
+            carouselButtons2.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var topic = this.getAttribute('data-topic');
+                    var messageElement = document.querySelector('.modal-message-carousel');
+                    messageElement.textContent = `${topic}은 준비중이야!`;
+                });
+            });
+
+
+            carouselButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (isCarouselFromImageUpload) {
+                        selectedTopic = this.dataset.topic;
+                        modalOverlayCarousel.style.display = 'none';
+                        console.log('Selected topic:', selectedTopic);
+                        addMessage(`선택한 주제는 ${selectedTopic}입니다. 어떤 도움이 필요하신가요?`, false);
+                        isCarouselFromImageUpload = false; // Reset the flag
+                    } else if (currentModal === 2) {
+                        transitionToNextModal(modalOverlay2, modalOverlay3);
+                        currentModal = 3;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
